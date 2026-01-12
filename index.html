@@ -1,0 +1,2978 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Website Resmi Pemerintah Desa Allaere, Kecamatan Tanralili, Kabupaten Maros - Portal Layanan Digital dan Informasi Publik">
+    <meta name="keywords" content="Desa Allaere, Pemerintah Desa, Maros, Layanan Online, BLT-DD, Kependudukan">
+    <meta name="author" content="Pemerintah Desa Allaere">
+    <title>PEMERINTAH DESA ALLAERE - Portal Digital Desa</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Leaflet CSS for Maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+         :root {
+            --primary-color: #BE0027;
+            --secondary-color: #DC2626;
+            --accent-color: #F59E0B;
+            --success-color: #10B981;
+            --info-color: #3B82F6;
+            --dark-color: #1F2937;
+            --light-color: #F9FAFB;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--light-color);
+            transition: background-color 0.3s ease;
+        }
+        
+        body.dark-mode {
+            background-color: #111827;
+            color: #F9FAFB;
+        }
+        
+        .gov-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .gov-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shimmer 8s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% {
+                left: -100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+        
+        .map-container {
+            height: 450px;
+            width: 100%;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .hover-lift {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .page-content {
+            display: none;
+            min-height: 600px;
+        }
+        
+        .page-content.active {
+            display: block;
+            animation: pageTransition 0.4s ease;
+        }
+        
+        @keyframes pageTransition {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .custom-div-icon {
+            background: transparent;
+            border: none;
+        }
+        
+        .nav-btn.active {
+            background-color: rgba(255, 255, 255, 0.25);
+            font-weight: 600;
+        }
+        /* Modal Styles */
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 1rem;
+            max-width: 900px;
+            width: 95%;
+            max-height: 95vh;
+            overflow-y: auto;
+            animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(100px) scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .service-link {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .service-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .service-link:hover::before {
+            left: 100%;
+        }
+        
+        .service-link:hover {
+            transform: translateX(8px) scale(1.02);
+        }
+        /* Progress Bar */
+        
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            z-index: 10000;
+            transition: width 0.3s ease;
+        }
+        /* Back to Top Button */
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .back-to-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+        /* News Ticker */
+        
+        .news-ticker {
+            background: var(--dark-color);
+            color: white;
+            padding: 10px 0;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .news-ticker-content {
+            display: flex;
+            animation: ticker 30s linear infinite;
+            white-space: nowrap;
+        }
+        
+        @keyframes ticker {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+        /* Search Box */
+        
+        .search-box {
+            position: relative;
+            max-width: 400px;
+        }
+        
+        .search-box input {
+            padding-right: 40px;
+            border-radius: 25px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .search-box input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(190, 0, 39, 0.1);
+        }
+        /* Dark Mode Toggle */
+        
+        .dark-mode-toggle {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: var(--dark-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .dark-mode-toggle:hover {
+            transform: scale(1.1);
+        }
+        /* Loading Spinner */
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        /* Breadcrumb */
+        
+        .breadcrumb {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 12px 0;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        /* Stats Counter */
+        
+        .stats-counter {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        /* Notification Toast */
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 10001;
+            max-width: 350px;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            border-left: 4px solid var(--success-color);
+        }
+        
+        .notification.error {
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .notification.info {
+            border-left: 4px solid var(--info-color);
+        }
+        /* Print Styles */
+        
+        @media print {
+            .gov-header,
+            footer,
+            .back-to-top,
+            .dark-mode-toggle,
+            .modal {
+                display: none !important;
+            }
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            .page-content {
+                display: block !important;
+            }
+        }
+        /* Responsive */
+        
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                margin: 10px;
+            }
+            .news-ticker-content {
+                animation-duration: 20s;
+            }
+        }
+        /* Document Upload Styles */
+        
+        .document-upload {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .document-upload:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(190, 0, 39, 0.05);
+        }
+        
+        .document-upload.dragover {
+            border-color: var(--primary-color);
+            background-color: rgba(190, 0, 39, 0.1);
+        }
+        
+        .document-list {
+            margin-top: 20px;
+        }
+        
+        .document-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .document-item:last-child {
+            border-bottom: none;
+        }
+        
+        .document-item:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .document-name {
+            font-weight: 500;
+        }
+        
+        .document-date {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .document-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-download {
+            color: var(--info-color);
+            cursor: pointer;
+        }
+        
+        .btn-delete {
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+        /* News and Announcement Styles */
+        
+        .news-item,
+        .announcement-item {
+            border-left: 4px solid var(--primary-color);
+            padding-left: 16px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .news-item:hover,
+        .announcement-item:hover {
+            background-color: #f9f9f9;
+            padding-left: 20px;
+        }
+        
+        .news-date,
+        .announcement-date {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        
+        .news-title,
+        .announcement-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .news-excerpt,
+        .announcement-content {
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .news-image,
+        .announcement-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        
+        .news-category,
+        .announcement-type {
+            display: inline-block;
+            padding: 4px 8px;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 0.8rem;
+            border-radius: 4px;
+            margin-right: 8px;
+        }
+        
+        .news-read-more {
+            color: var(--primary-color);
+            font-weight: bold;
+            text-decoration: none;
+        }
+        
+        .news-read-more:hover {
+            text-decoration: underline;
+        }
+        /* News Detail Modal Styles */
+        
+        .news-detail-content {
+            line-height: 1.8;
+        }
+        
+        .news-detail-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .news-detail-content h2 {
+            color: var(--primary-color);
+            margin: 20px 0 10px 0;
+        }
+        
+        .news-detail-content h3 {
+            color: #333;
+            margin: 15px 0 8px 0;
+        }
+        
+        .news-detail-content p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        .news-detail-content ul,
+        .news-detail-content ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+        
+        .news-detail-content li {
+            margin-bottom: 8px;
+        }
+        
+        .news-detail-content blockquote {
+            border-left: 4px solid var(--primary-color);
+            padding-left: 20px;
+            margin: 20px 0;
+            font-style: italic;
+            color: #666;
+        }
+        
+        .news-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+            margin: 20px 0;
+        }
+        
+        .news-author {
+            display: flex;
+            align-items: center;
+        }
+        
+        .news-author img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .news-share {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .news-share button {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .news-share button:hover {
+            transform: scale(1.1);
+        }
+        
+        .news-share-facebook {
+            background-color: #1877F2;
+            color: white;
+        }
+        
+        .news-share-twitter {
+            background-color: #1DA1F2;
+            color: white;
+        }
+        
+        .news-share-whatsapp {
+            background-color: #25D366;
+            color: white;
+        }
+        
+        .related-news {
+            margin-top: 30px;
+        }
+        
+        .related-news-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .related-news-item:hover {
+            background-color: #f9f9f9;
+            padding-left: 10px;
+        }
+        
+        .related-news-item:last-child {
+            border-bottom: none;
+        }
+        
+        .related-news-image {
+            width: 100px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+        
+        .related-news-content {
+            flex: 1;
+        }
+        
+        .related-news-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .related-news-date {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        /* Map Controls */
+        
+        .map-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .map-control-btn {
+            background: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .map-control-btn:hover {
+            background: #f0f0f0;
+        }
+        /* Map Loading */
+        
+        .map-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 999;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <!-- Progress Bar -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- News Ticker -->
+    <div class="news-ticker">
+        <div class="news-ticker-content">
+            <span class="mx-8">📢 Jam Operasional senin-kamis: 08.00-16.00  jummat: 08.00-14.00 </span>
+        </div>
+    </div>
+
+    <!-- Official Header -->
+    <header class="gov-header text-white shadow-xl relative">
+        <div class="container mx-auto px-4 relative z-10">
+            <!-- Top Bar -->
+            <div class="py-3 border-b border-white/20">
+                <div class="flex justify-between items-center text-sm">
+                    <div class="flex items-center space-x-4">
+                        <span>🇮🇩 REPUBLIK INDONESIA</span>
+                        <span class="hidden md:inline">|</span>
+                        <span class="hidden md:inline">PROVINSI SULAWESI SELATAN</span>
+                        <span class="hidden md:inline">|</span>
+                        <span class="hidden md:inline">KABUPATEN MAROS</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <span>📧 Desaallaere766@gmail.com</span>
+                        <span>📞 +62 852-4054-3473</span>
+                        <div class="search-box">
+                            <input type="text" id="searchInput" placeholder="Cari..." class="px-4 py-1 rounded-full text-sm text-gray-800 focus:outline-none">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Header -->
+            <div class="py-6">
+                <div class="flex flex-col md:flex-row items-center justify-between">
+                    <div class="flex items-center space-x-4 mb-4 md:mb-0">
+                        <!-- Logo Desa Allaere -->
+                        <img src="https://picsum.photos/seed/logo/150/150.jpg" alt="Logo Desa Allaere" width="150">
+                        <div>
+                            <h1 class="text-3xl md:text-4xl font-bold">PEMERINTAH DESA ALLAERE</h1>
+                            <p class="text-lg opacity-90">Kecamatan Tanralili - Kabupaten Maros</p>
+                            <p class="text-sm opacity-75 mt-1">Jl. Poros Maccopa-Ammarang, Kode Pos 90553</p>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <div class="bg-white/10 backdrop-blur px-6 py-3 rounded-lg">
+                            <div class="text-3xl font-bold stats-counter" data-target="2.751">0</div>
+                            <div class="text-sm">Jiwa Penduduk</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="bg-white/10 backdrop-blur sticky top-0 z-50">
+                <div class="flex flex-wrap justify-center items-center py-3">
+                    <button onclick="showPage('beranda', this)" class="nav-btn active px-6 py-2 hover:bg-white/20 rounded-lg transition font-medium">BERANDA</button>
+                    <button onclick="showPage('profil', this)" class="nav-btn px-6 py-2 hover:bg-white/20 rounded-lg transition font-medium">PROFIL</button>
+                    <button onclick="showPage('pemerintahan', this)" class="nav-btn px-6 py-2 hover:bg-white/20 rounded-lg transition font-medium">PEMERINTAHAN</button>
+                    <button onclick="showPage('informasi', this)" class="nav-btn px-6 py-2 hover:bg-white/20 rounded-lg transition font-medium">INFORMASI</button>
+                    <button onclick="showPage('layanan', this)" class="nav-btn px-6 py-2 hover:bg-white/20 rounded-lg transition font-medium">LAYANAN</button>
+                    <button onclick="showPage('kontak', this)" class="nav-btn px-6 py-2 hover:bg-white/20 rounded-lg transition font-medium">KONTAK</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb" id="breadcrumb">
+            <div class="flex items-center text-sm">
+                <a href="#" onclick="showPage('beranda', this)" class="text-gray-600 hover:text-red-600">Beranda</a>
+                <span class="mx-2">/</span>
+                <span id="currentPageName" class="text-gray-900 font-medium">Beranda</span>
+            </div>
+        </div>
+
+        <!-- Beranda Page -->
+        <div id="beranda" class="page-content active fade-in">
+            <!-- Official Announcement -->
+            <section class="bg-yellow-50 border-l-4 border-yellow-400 p-6 mb-8 rounded-r-lg hover-lift" data-aos="fade-right">
+                <div class="flex items-center">
+                    <span class="text-4xl mr-4">📢</span>
+                    <div class="flex-1">
+                        <h2 class="text-xl font-bold text-yellow-800">PENGUMUMAN RESMI</h2>
+                        <p class="text-yellow-700" id="announcementText">Pembukaan Pendaftaran Program Bantuan Langsung Tunai Dana Desa (BLT-DD) Tahap I Tahun 2025</p>
+                    </div>
+                    <button onclick="showPage('pengumuman', this)" class="bg-yellow-400 text-yellow-900 px-4 py-2 rounded-lg hover:bg-yellow-500 transition">
+                        Lihat Detail
+                    </button>
+                </div>
+            </section>
+
+            <!-- Welcome Section -->
+            <section class="bg-white rounded-lg shadow-lg p-8 mb-8" data-aos="fade-up">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">SELAMAT DATANG DI PORTAL DIGITAL DESA ALLAERE</h2>
+                <p class="text-center text-gray-600 max-w-3xl mx-auto mb-8">
+                    Website resmi Pemerintah Desa Allaere merupakan sarana informasi publik dan transparansi pemerintahan desa dalam memberikan pelayanan terbaik bagi masyarakat.
+                </p>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div class="text-center hover-lift bg-red-50 p-6 rounded-lg" data-aos="zoom-in" data-aos-delay="100">
+                        <div class="text-5xl mb-3">👥</div>
+                        <h3 class="font-bold text-2xl stats-counter" data-target="2.751">0</h3>
+                        <p class="text-gray-600">Jiwa Penduduk</p>
+                    </div>
+                    <div class="text-center hover-lift bg-blue-50 p-6 rounded-lg" data-aos="zoom-in" data-aos-delay="200">
+                        <div class="text-5xl mb-3">🏘️</div>
+                        <h3 class="font-bold text-2xl stats-counter" data-target="5">0</h3>
+                        <p class="text-gray-600">Dusun</p>
+                    </div>
+                    <div class="text-center hover-lift bg-green-50 p-6 rounded-lg" data-aos="zoom-in" data-aos-delay="300">
+                        <div class="text-5xl mb-3">👨‍👩‍👧‍👦</div>
+                        <h3 class="font-bold text-2xl stats-counter" data-target="823">0</h3>
+                        <p class="text-gray-600">Kepala Keluarga</p>
+                    </div>
+                    <div class="text-center hover-lift bg-yellow-50 p-6 rounded-lg" data-aos="zoom-in" data-aos-delay="400">
+                        <div class="text-5xl mb-3">📍</div>
+                        <h3 class="font-bold text-2xl stats-counter" data-target="8.30">0</h3>
+                        <p class="text-gray-600">km² Luas Wilayah</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Actions -->
+            <section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <button onclick="openModal('surat')" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6 rounded-lg hover-lift text-center" data-aos="flip-left">
+                    <i class="fas fa-file-alt text-3xl mb-2"></i>
+                    <p class="font-semibold">Ajukan Surat</p>
+                </button>
+                <button onclick="openModal('penduduk')" class="bg-gradient-to-r from-purple-500 to-purple-600 text-white p-6 rounded-lg hover-lift text-center" data-aos="flip-left" data-aos-delay="200">
+                    <i class="fas fa-users text-3xl mb-2"></i>
+                    <p class="font-semibold">Data Penduduk</p>
+                </button>
+                <button onclick="openModal('pembangunan')" class="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-6 rounded-lg hover-lift text-center" data-aos="flip-left" data-aos-delay="300">
+                    <i class="fas fa-hammer text-3xl mb-2"></i>
+                    <p class="font-semibold">Usulan Pembangunan</p>
+                </button>
+            </section>
+
+            <!-- News & Information Grid -->
+            <div class="grid md:grid-cols-3 gap-8 mb-8">
+                <!-- Berita Terkini -->
+                <section class="md:col-span-2">
+                    <div class="bg-white rounded-lg shadow-lg p-6" data-aos="fade-right">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                            <span class="mr-3">📰</span> BERITA TERKINI
+                        </h2>
+                        <div id="newsContainer" class="space-y-6">
+                            <!-- News items will be loaded here -->
+                        </div>
+                        <div class="text-center mt-6">
+                            <button onclick="loadMoreNews()" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition">
+                                Muat Lebih Banyak
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Sidebar -->
+                <section>
+                    <!-- Quick Links -->
+                    <div class="bg-white rounded-lg shadow-lg p-6 mb-6" data-aos="fade-left">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                            <span class="mr-3">🔗</span> LAYANAN ONLINE
+                        </h2>
+                        <div class="space-y-3">
+                            <div onclick="openModal('surat')" class="service-link block bg-gray-50 p-4 rounded-lg hover:bg-red-600 hover:text-white transition">
+                                <span class="mr-2">📄</span> Pengajuan Surat Keterangan
+                            </div>
+                            <div onclick="openModal('penduduk')" class="service-link block bg-gray-50 p-4 rounded-lg hover:bg-red-600 hover:text-white transition">
+                                <span class="mr-2">📊</span> Data Kependudukan
+                            </div>
+                            <div onclick="openModal('pembangunan')" class="service-link block bg-gray-50 p-4 rounded-lg hover:bg-red-600 hover:text-white transition">
+                                <span class="mr-2">🏗️</span> Usulan Pembangunan
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Agenda Kegiatan -->
+                    <div class="bg-white rounded-lg shadow-lg p-6 mb-6" data-aos="fade-left" data-aos-delay="100">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                            <span class="mr-3">📅</span> AGENDA KEGIATAN
+                        </h2>
+                        <div class="space-y-3">
+                            <div class="border-l-4 border-yellow-400 pl-3 hover:bg-gray-50 p-2 rounded cursor-pointer" onclick="showNotification('info', 'Detail: Musrenbangdes 2025')">
+                                <div class="font-semibold">20 Jan 2025</div>
+                                <div class="text-sm text-gray-600">Musrenbangdes 2025</div>
+                                <div class="text-xs text-gray-500">08:00 WITA - Kantor Desa</div>
+                            </div>
+                            <div class="border-l-4 border-blue-400 pl-3 hover:bg-gray-50 p-2 rounded cursor-pointer" onclick="showNotification('info', 'Detail: Penyaluran BST')">
+                                <div class="font-semibold">25 Jan 2025</div>
+                                <div class="text-sm text-gray-600">Penyaluran BST</div>
+                                <div class="text-xs text-gray-500">09:00 WITA - Kantor Desa</div>
+                            </div>
+                            <div class="border-l-4 border-green-400 pl-3 hover:bg-gray-50 p-2 rounded cursor-pointer" onclick="showNotification('info', 'Detail: Vaksinasi')">
+                                <div class="font-semibold">1 Feb 2025</div>
+                                <div class="text-sm text-gray-600">Vaksinasi COVID-19</div>
+                                <div class="text-xs text-gray-500">08:00-12:00 WITA - Posyandu</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Weather Widget -->
+                    <div class="bg-gradient-to-br from-blue-400 to-blue-600 text-white rounded-lg shadow-lg p-6" data-aos="fade-left" data-aos-delay="200">
+                        <h3 class="text-lg font-bold mb-3">Cuaca Hari Ini</h3>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <div class="text-3xl font-bold">28°C</div>
+                                <div class="text-sm opacity-90">Cerah Berawan</div>
+                            </div>
+                            <div class="text-5xl">⛅</div>
+                        </div>
+                        <div class="mt-3 text-sm opacity-90">
+                            Kelembaban: 65% | Angin: 12 km/h
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Statistics Dashboard -->
+            <section class="bg-white rounded-lg shadow-lg p-8" data-aos="fade-up">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">DASHBOARD STATISTIK DESA</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div class="text-center">
+                        <div class="relative inline-flex items-center justify-center">
+                            <svg class="w-24 h-24 transform -rotate-90">
+                                <circle cx="48" cy="48" r="36" stroke="#E5E7EB" stroke-width="8" fill="none"></circle>
+                                <circle cx="48" cy="48" r="36" stroke="#BE0027" stroke-width="8" fill="none" 
+                                        stroke-dasharray="226" stroke-dashoffset="56" stroke-linecap="round"
+                                        class="progress-circle"></circle>
+                            </svg>
+                            <div class="absolute">
+                                <div class="text-xl font-bold progress-percent" data-target="75">0%</div>
+                            </div>
+                        </div>
+                        <p class="mt-2 font-semibold">Tingkat Pendidikan</p>
+                    </div>
+
+                    <div class="text-center">
+                        <div class="relative inline-flex items-center justify-center">
+                            <svg class="w-24 h-24 transform -rotate-90">
+                                <circle cx="48" cy="48" r="36" stroke="#E5E7EB" stroke-width="8" fill="none"></circle>
+                                <circle cx="48" cy="48" r="36" stroke="#10B981" stroke-width="8" fill="none" 
+                                        stroke-dasharray="226" stroke-dashoffset="68" stroke-linecap="round"
+                                        class="progress-circle"></circle>
+                            </svg>
+                            <div class="absolute">
+                                <div class="text-xl font-bold progress-percent" data-target="70">0%</div>
+                            </div>
+                        </div>
+                        <p class="mt-2 font-semibold">Kesejahteraan</p>
+                    </div>
+
+                    <div class="text-center">
+                        <div class="relative inline-flex items-center justify-center">
+                            <svg class="w-24 h-24 transform -rotate-90">
+                                <circle cx="48" cy="48" r="36" stroke="#E5E7EB" stroke-width="8" fill="none"></circle>
+                                <circle cx="48" cy="48" r="36" stroke="#3B82F6" stroke-width="8" fill="none" 
+                                        stroke-dasharray="226" stroke-dashoffset="45" stroke-linecap="round"
+                                        class="progress-circle"></circle>
+                            </svg>
+                            <div class="absolute">
+                                <div class="text-xl font-bold progress-percent" data-target="80">0%</div>
+                            </div>
+                        </div>
+                        <p class="mt-2 font-semibold">Infrastruktur</p>
+                    </div>
+
+                    <div class="text-center">
+                        <div class="relative inline-flex items-center justify-center">
+                            <svg class="w-24 h-24 transform -rotate-90">
+                                <circle cx="48" cy="48" r="36" stroke="#E5E7EB" stroke-width="8" fill="none"></circle>
+                                <circle cx="48" cy="48" r="36" stroke="#F59E0B" stroke-width="8" fill="none" 
+                                        stroke-dasharray="226" stroke-dashoffset="79" stroke-linecap="round"
+                                        class="progress-circle"></circle>
+                            </svg>
+                            <div class="absolute">
+                                <div class="text-xl font-bold progress-percent" data-target="65">0%</div>
+                            </div>
+                        </div>
+                        <p class="mt-2 font-semibold">Pelayanan Publik</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Pengumuman Page -->
+        <div id="pengumuman" class="page-content fade-in">
+            <div class="bg-white rounded-lg shadow-lg p-8" data-aos="fade-up">
+                <h1 class="text-3xl font-bold text-gray-800 mb-8 text-center">PENGUMUMAN RESMI</h1>
+
+                <div id="announcementContainer" class="space-y-6">
+                    <!-- Announcement items will be loaded here -->
+                </div>
+
+                <div class="text-center mt-6">
+                    <button onclick="loadMoreAnnouncements()" class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition">
+                        Muat Lebih Banyak
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profil Page -->
+        <div id="profil" class="page-content fade-in">
+            <div class="bg-white rounded-lg shadow-lg p-8" data-aos="fade-up">
+                <h1 class="text-3xl font-bold text-gray-800 mb-8 text-center">PROFIL DESA ALLAERE</h1>
+
+                <!-- Identitas Desa -->
+                <section class="mb-8" data-aos="fade-right">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">IDENTITAS DESA</h2>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-gray-50 p-6 rounded-lg hover-lift">
+                            <table class="w-full">
+                                <tr class="border-b">
+                                    <td class="py-2 font-semibold">Nama Desa</td>
+                                    <td class="py-2">:</td>
+                                    <td class="py-2">Allaere</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="py-2 font-semibold">Kecamatan</td>
+                                    <td class="py-2">:</td>
+                                    <td class="py-2">Tanralili</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="py-2 font-semibold">Kabupaten</td>
+                                    <td class="py-2">:</td>
+                                    <td class="py-2">Maros</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 font-semibold">Provinsi</td>
+                                    <td class="py-2">:</td>
+                                    <td class="py-2">Sulawesi Selatan</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="bg-gray-50 p-6 rounded-lg hover-lift">
+                            <table class="w-full">
+                                <tr class="border-b">
+                                    <td class="py-2 font-semibold">Kode Desa</td>
+                                    <td class="py-2">:</td>
+                                    <td class="py-2">73.08.05.2004</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="py-2 font-semibold">Luas Wilayah</td>
+                                    <td class="py-2">:</td>
+                                    <td class="py-2">8,30 km²</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="py-2 font-semibold">Jumlah Dusun</td>
+                                    <td class="py-2">:</td>
+                                    <td class="py-2">5 Dusun</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 font-semibold">Kepadatan</td>
+                                    <td class="py-2">:</td>
+                                    <td class="py-2">2751 jiwa/km²</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Sejarah Desa -->
+                <section class="mb-8" data-aos="fade-left">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">SEJARAH DESA</h2>
+                    <div class="prose max-w-none">
+                        <p class="mb-4">Desa Allaere merupakan salah satu desa yang terletak di Kecamatan Tanralili, Kabupaten Maros. Berdasarkan sejarah lisan yang diturunkan dari generasi ke generasi, Desa Allaere awalnya adalah sebuah pemukiman kecil yang didirikan
+                            oleh para pendatang dari daerah Bugis-Makassar pada sekitar tahun 1920.</p>
+                        <p class="mb-4">Nama "Allaere" berasal dari bahasa Bugis yang memiliki makna "tempat yang strategis". Penamaan ini tidak lepas dari letak geografis desa yang menjadi persimpangan penting antara beberapa wilayah di Kabupaten Maros, menjadikannya
+                            sebagai pusat perdagangan dan aktivitas sosial masyarakat sekitar.</p>
+                        <p>Seiring dengan perkembangan zaman, Desa Allaere mengalami pertumbuhan yang signifikan dari pemukiman kecil menjadi desa yang mandiri. Pada tahun 1982, Allaere secara resmi ditetapkan sebagai desa definitif dengan batas-batas administratif
+                            yang jelas. Hingga saat ini, desa terus berkembang namun tetap menjaga nilai-nilai luhur yang diwariskan oleh para leluhur.</p>
+                    </div>
+                </section>
+
+                <!-- Visi Misi -->
+                <section class="mb-8" data-aos="fade-right">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">VISI DAN MISI</h2>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-red-50 p-6 rounded-lg border-l-4 border-red-600 hover-lift">
+                            <h3 class="text-xl font-bold mb-4">🎯 VISI DESA</h3>
+                            <p class="italic">"MEWUJUDKAN DESA ALLAERE LEBIH SEJAHTRA, AMAN DAN DAMAI "</p>
+                        </div>
+                        <div class="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-500 hover-lift">
+                            <h3 class="text-xl font-bold mb-4">📋 MISI DESA</h3>
+                            <ol class="list-decimal list-inside space-y-2">
+                                <li>Meningkatkan pembangunan infrastruktur disemua wilayah Dusun.</li>
+                                <li>Meningkatkan pelayanan Masyarakat</li>
+                                <li>Meningkatkan kwalitas hidup Masyarakat</li>
+                                <li>Meningkatkan perekonomian Desa dan membawa Desa lebih Mandiri</li>
+                            </ol>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Potensi Desa -->
+                <section data-aos="fade-left">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">POTENSI DESA</h2>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-green-50 p-6 rounded-lg hover-lift">
+                            <h3 class="text-xl font-bold mb-3">🌾 POTENSI PERTANIAN</h3>
+                            <p class="mb-3">Desa Allaere memiliki lahan pertanian yang subur dengan produk unggulan:</p>
+                            <ul class="list-disc list-inside space-y-1 text-gray-600">
+                                <li>Padi sawah: 150 Ha</li>
+                                <li>Jagung: 75 Ha</li>
+                                <li>Tanaman palawija: 50 Ha</li>
+                                <li>Perkebunan kelapa: 30 Ha</li>
+                            </ul>
+                        </div>
+                        <div class="bg-yellow-50 p-6 rounded-lg hover-lift">
+                            <h3 class="text-xl font-bold mb-3">🏭 POTENSI UMKM</h3>
+                            <p class="mb-3">Berbagai produk UMKM telah dikembangkan:</p>
+                            <ul class="list-disc list-inside space-y-1 text-gray-600">
+                                <li>Industri tenun tradisional Bugis</li>
+                                <li>Kerajinan anyaman pandan</li>
+                                <li>Produksi makanan tradisional</li>
+                                <li>Budidaya ikan air tawar</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- Pemerintahan Page -->
+        <div id="pemerintahan" class="page-content fade-in">
+            <div class="bg-white rounded-lg shadow-lg p-8" data-aos="fade-up">
+                <h1 class="text-3xl font-bold text-gray-800 mb-8 text-center">STRUKTUR PEMERINTAHAN DESA</h1>
+
+                <!-- Organisasi Chart -->
+                <section class="mb-8" data-aos="zoom-in">
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <div class="text-center mb-6">
+                            <div class="inline-block bg-red-600 text-white px-8 py-4 rounded-lg shadow-lg hover-lift">
+                                <div class="font-bold text-lg">KEPALA DESA</div>
+                                <div>HARIS, S.H.</div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-center mb-6">
+                            <div class="w-1 h-12 bg-gray-400"></div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="text-center">
+                                <div class="bg-white border-2 border-gray-300 px-4 py-3 rounded-lg hover-lift">
+                                    <div class="font-semibold">SEKRETARIS DESA</div>
+                                    <div class="text-sm text-gray-600">JUNAEDAH</div>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <div class="bg-white border-2 border-gray-300 px-4 py-3 rounded-lg hover-lift">
+                                    <div class="font-semibold">KAUR KEUANGAN</div>
+                                    <div class="text-sm text-gray-600">RAHMAWATI</div>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <div class="bg-white border-2 border-gray-300 px-4 py-3 rounded-lg hover-lift">
+                                    <div class="font-semibold">KAUR UMUM</div>
+                                    <div class="text-sm text-gray-600">ANDI HILDA SRI HARTANTI</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-center my-4">
+                            <div class="w-1 h-8 bg-gray-400"></div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="text-center">
+                                <div class="bg-white border-2 border-gray-300 px-4 py-3 rounded-lg hover-lift">
+                                    <div class="font-semibold">KAUR PERENCANAAN</div>
+                                    <div class="text-sm text-gray-600">ANDI HILDA SRI HARTANTI</div>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <div class="bg-white border-2 border-gray-300 px-4 py-3 rounded-lg hover-lift">
+                                    <div class="font-semibold">KAUR KESEJAHTERAAN</div>
+                                    <div class="text-sm text-gray-600">ERWIN</div>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <div class="bg-white border-2 border-gray-300 px-4 py-3 rounded-lg hover-lift">
+                                    <div class="font-semibold">KAUR PEMERINTAHAN</div>
+                                    <div class="text-sm text-gray-600">SYAMSIAH</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Kepala Dusun -->
+                <section class="mb-8" data-aos="fade-right">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">KEPALA DUSUN</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500 hover-lift">
+                            <div class="font-semibold">Dusun Cambayya</div>
+                            <div class="text-gray-600">Bapak H. SYAMSUDDIN</div>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500 hover-lift">
+                            <div class="font-semibold">Dusun Tanadidi</div>
+                            <div class="text-gray-600">Bapak ABDUL HAKIM</div>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500 hover-lift">
+                            <div class="font-semibold">Dusun Biringkaloro</div>
+                            <div class="text-gray-600">Bapak MUHAMMAD RIZAL</div>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500 hover-lift">
+                            <div class="font-semibold">Dusun Bontotangnga</div>
+                            <div class="text-gray-600">Bapak ANDI MAPPATUNRU</div>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500 hover-lift">
+                            <div class="font-semibold">Dusun Bontocinde</div>
+                            <div class="text-gray-600">Bapak ANDI MAPPATUNRU</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- BPD -->
+                <section data-aos="fade-left">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">BADAN PERMUSYAWARATAN DESA (BPD)</h2>
+                    <div class="bg-green-50 p-6 rounded-lg">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <div class="font-semibold mb-2">Ketua BPD</div>
+                                <div class="text-gray-600">MUHAMMAD SUKMA</div>
+                            </div>
+                            <div>
+                                <div class="font-semibold mb-2">Wakil Ketua BPD</div>
+                                <div class="text-gray-600">ABD HAMID TARANG</div>
+                            </div>
+                            <div>
+                                <div class="font-semibold mb-2">Sekretaris BPD</div>
+                                <div class="text-gray-600">HJ SITI NASRAH</div>
+                            </div>
+                            <div>
+                                <div class="font-semibold mb-2">Anggota BPD</div>
+                                <div class="text-gray-600">4 Orang</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- Informasi Page -->
+        <div id="informasi" class="page-content fade-in">
+            <div class="bg-white rounded-lg shadow-lg p-8" data-aos="fade-up">
+                <h1 class="text-3xl font-bold text-gray-800 mb-8 text-center">INFORMASI PUBLIK</h1>
+
+                <!-- PPID -->
+                <section class="mb-8" data-aos="fade-right">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">PEJABAT PENGELOLA INFORMASI DAN DOKUMENTASI (PPID)</h2>
+                    <div class="bg-yellow-50 p-6 rounded-lg border-l-4 border-yellow-400">
+                        <p class="mb-4"><strong>Dasar Hukum:</strong> Undang-Undang No. 14 Tahun 2008 tentang Keterbukaan Informasi Publik</p>
+                        <p class="mb-4"><strong>Tugas PPID:</strong> Memberikan layanan informasi publik kepada masyarakat sesuai dengan peraturan perundang-undangan yang berlaku.</p>
+
+                        <div class="grid md:grid-cols-2 gap-4 mt-6">
+                            <div>
+                                <h3 class="font-bold mb-2">PPID Utama</h3>
+                                <p>Kepala Desa Allaere</p>
+                                <p>HARIS, S.H.</p>
+                            </div>
+                            <div>
+                                <h3 class="font-bold mb-2">PPID Pembantu</h3>
+                                <p>Sekretaris Desa</p>
+                                <p>JUNAEDAH</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Jenis Informasi -->
+                <section class="mb-8" data-aos="fade-left">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">JENIS INFORMASI YANG WAJIB DISEDIAKAN</h2>
+                    <div class="space-y-4">
+                        <div class="border-l-4 border-blue-500 pl-4 p-4 bg-blue-50 rounded hover-lift">
+                            <h3 class="font-bold">Informasi Berkala</h3>
+                            <p class="text-gray-600">Informasi yang wajib diumumkan secara berkala</p>
+                        </div>
+                        <div class="border-l-4 border-green-500 pl-4 p-4 bg-green-50 rounded hover-lift">
+                            <h3 class="font-bold">Informasi Serta Merta</h3>
+                            <p class="text-gray-600">Informasi yang dapat diakses langsung</p>
+                        </div>
+                        <div class="border-l-4 border-yellow-500 pl-4 p-4 bg-yellow-50 rounded hover-lift">
+                            <h3 class="font-bold">Informasi Setiap Saat</h3>
+                            <p class="text-gray-600">Informasi yang tersedia setiap saat</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Dokumen Peraturan -->
+                <section class="mb-8" data-aos="fade-right">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">DOKUMEN PERATURAN</h2>
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <div class="mb-4">
+                            <h3 class="text-lg font-semibold mb-2">Upload Dokumen Peraturan</h3>
+                            <div id="documentUpload" class="document-upload">
+                                <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-2"></i>
+                                <p class="text-gray-600">Klik atau seret file ke area ini untuk mengunggah</p>
+                                <p class="text-sm text-gray-500 mt-1">Format yang didukung: PDF, DOC, DOCX (Maks. 10MB)</p>
+                                <input type="file" id="fileInput" accept=".pdf,.doc,.docx" style="display: none;">
+                            </div>
+                        </div>
+
+                        <div class="document-list" id="documentList">
+                            <h3 class="text-lg font-semibold mb-2">Daftar Dokumen Peraturan</h3>
+                            <div id="documentItems">
+                                <!-- Document items will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Informasi Publik Lainnya -->
+                <section data-aos="fade-left">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">INFORMASI PUBLIK LAINNYA</h2>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-gray-50 p-6 rounded-lg hover-lift">
+                            <h3 class="text-xl font-bold mb-3">📊 LAPORAN KEUANGAN</h3>
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center p-2 hover:bg-white rounded cursor-pointer">
+                                    <span>Laporan Keuangan Triwulan I 2025</span>
+                                    <button class="text-blue-600 hover:underline" onclick="downloadDocument('laporan-keuangan-triwulan-i-2025.pdf')">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                </div>
+                                <div class="flex justify-between items-center p-2 hover:bg-white rounded cursor-pointer">
+                                    <span>Laporan Keuangan Tahun 2024</span>
+                                    <button class="text-blue-600 hover:underline" onclick="downloadDocument('laporan-keuangan-tahun-2024.pdf')">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 p-6 rounded-lg hover-lift">
+                            <h3 class="text-xl font-bold mb-3">📋 RENCANA KERJA</h3>
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center p-2 hover:bg-white rounded cursor-pointer">
+                                    <span>RKP Desa Tahun 2025</span>
+                                    <button class="text-blue-600 hover:underline" onclick="downloadDocument('rkp-desa-2025.pdf')">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                </div>
+                                <div class="flex justify-between items-center p-2 hover:bg-white rounded cursor-pointer">
+                                    <span>RPJM Desa 2021-2026</span>
+                                    <button class="text-blue-600 hover:underline" onclick="downloadDocument('rpjm-desa-2021-2026.pdf')">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- Layanan Page -->
+        <div id="layanan" class="page-content fade-in">
+            <div class="bg-white rounded-lg shadow-lg p-8" data-aos="fade-up">
+                <h1 class="text-3xl font-bold text-gray-800 mb-8 text-center">LAYANAN PUBLIK</h1>
+
+                <!-- Jam Pelayanan -->
+                <section class="mb-8" data-aos="fade-right">
+                    <div class="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-500">
+                        <h2 class="text-xl font-bold mb-4">🕐 JAM PELAYANAN</h2>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <h3 class="font-semibold mb-2">Senin - Kamis</h3>
+                                <p>08:00 - 16:00 WITA</p>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold mb-2">Jumat</h3>
+                                <p>08:00 - 14:00 WITA</p>
+                            </div>
+                        </div>
+                        <p class="mt-4 text-sm text-gray-600">*Pelayanan tutup pada hari libur nasional</p>
+                    </div>
+                </section>
+
+                <!-- Layanan Administrasi -->
+                <section data-aos="fade-left">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">LAYANAN ADMINISTRASI KEPENDUDUKAN</h2>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="border rounded-lg p-6 hover-lift cursor-pointer" onclick="openModal('surat')">
+                            <h3 class="text-lg font-bold mb-3 text-red-600">📄 Surat Keterangan Domisili</h3>
+                            <div class="space-y-2 text-sm">
+                                <div><strong>Persyaratan:</strong> KTP, KK</div>
+                                <div><strong>Waktu Pelayanan:</strong> 1 hari kerja</div>
+                                <div><strong>Biaya:</strong> Gratis</div>
+                            </div>
+                        </div>
+
+                        <div class="border rounded-lg p-6 hover-lift cursor-pointer" onclick="openModal('surat')">
+                            <h3 class="text-lg font-bold mb-3 text-red-600">🏪 Surat Keterangan Usaha</h3>
+                            <div class="space-y-2 text-sm">
+                                <div><strong>Persyaratan:</strong> KTP, KK, Foto Usaha</div>
+                                <div><strong>Waktu Pelayanan:</strong> 2 hari kerja</div>
+                                <div><strong>Biaya:</strong> Gratis</div>
+                            </div>
+                        </div>
+
+                        <div class="border rounded-lg p-6 hover-lift cursor-pointer" onclick="openModal('surat')">
+                            <h3 class="text-lg font-bold mb-3 text-red-600">📝 Surat Keterangan Kelahiran</h3>
+                            <div class="space-y-2 text-sm">
+                                <div><strong>Persyaratan:</strong> KTP orang tua, KK, Surat Kelahiran dari RS/Bidan</div>
+                                <div><strong>Waktu Pelayanan:</strong> 1 hari kerja</div>
+                                <div><strong>Biaya:</strong> Gratis</div>
+                            </div>
+                        </div>
+
+                        <div class="border rounded-lg p-6 hover-lift cursor-pointer" onclick="openModal('surat')">
+                            <h3 class="text-lg font-bold mb-3 text-red-600">📋 Surat Keterangan Kematian</h3>
+                            <div class="space-y-2 text-sm">
+                                <div><strong>Persyaratan:</strong> KTP almarhum, KK, Surat Kematian dari RS/Dokter</div>
+                                <div><strong>Waktu Pelayanan:</strong> 1 hari kerja</div>
+                                <div><strong>Biaya:</strong> Gratis</div>
+                            </div>
+                        </div>
+
+                        <div class="border rounded-lg p-6 hover-lift cursor-pointer" onclick="openModal('surat')">
+                            <h3 class="text-lg font-bold mb-3 text-red-600">🛡️ Surat Pengantar SKCK</h3>
+                            <div class="space-y-2 text-sm">
+                                <div><strong>Persyaratan:</strong> KTP, KK, Pas foto 4x6 (2 lembar)</div>
+                                <div><strong>Waktu Pelayanan:</strong> 1 hari kerja</div>
+                                <div><strong>Biaya:</strong> Gratis</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Catatan -->
+                    <div class="mt-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
+                        <p><strong>⚠️ CATATAN PENTING:</strong></p>
+                        <ul class="list-disc list-inside text-sm mt-2">
+                            <li>Semua layanan administrasi desa GRATIS sesuai Peraturan Pemerintah</li>
+                            <li>Pemohon wajib melampirkan fotokopi persyaratan yang diminta</li>
+                            <li>Pelayanan dapat ditunda jika persyaratan tidak lengkap</li>
+                            <li>Untuk informasi lebih lanjut, hubungi kantor desa</li>
+                        </ul>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- Kontak Page -->
+        <div id="kontak" class="page-content fade-in">
+            <div class="bg-white rounded-lg shadow-lg p-8" data-aos="fade-up">
+                <h1 class="text-3xl font-bold text-gray-800 mb-8 text-center">HUBUNGI KAMI</h1>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Informasi Kontak -->
+                    <div data-aos="fade-right">
+                        <h2 class="text-2xl font-bold mb-6">📞 INFORMASI KONTAK</h2>
+                        <div class="space-y-6">
+                            <div class="flex items-start hover-lift bg-gray-50 p-4 rounded-lg">
+                                <span class="text-3xl mr-4">📍</span>
+                                <div>
+                                    <h3 class="font-semibold text-lg">Alamat Kantor</h3>
+                                    <p class="text-gray-600">Jl. Poros Maccopa-Ammarang<br>Dusun Bontotangnga<br>Kecamatan Tanralili<br>Kabupaten Maros, Provinsi Sulawesi Selatan<br>Kode Pos: 90553</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start hover-lift bg-gray-50 p-4 rounded-lg">
+                                <span class="text-3xl mr-4">📱</span>
+                                <div>
+                                    <h3 class="font-semibold text-lg">Kontak Telepon</h3>
+                                    <p class="text-gray-600">Kantor: (0411) 876543<br>Kepala Desa: 082344088728<br>Sekretaris: 085240543473</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start hover-lift bg-gray-50 p-4 rounded-lg">
+                                <span class="text-3xl mr-4">📧</span>
+                                <div>
+                                    <h3 class="font-semibold text-lg">Email</h3>
+                                    <p class="text-gray-600">Umum: Desaallaere766@gmail.com</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start hover-lift bg-gray-50 p-4 rounded-lg">
+                                <span class="text-3xl mr-4">🌐</span>
+                                <div>
+                                    <h3 class="font-semibold text-lg">Media Sosial</h3>
+                                    <div class="flex space-x-4 mt-2">
+                                        <a href="#" class="text-blue-600 hover:text-blue-800"><i class="fab fa-facebook text-2xl"></i></a>
+                                        <a href="#" class="text-pink-600 hover:text-pink-800"><i class="fab fa-instagram text-2xl"></i></a>
+                                        <a href="#" class="text-red-600 hover:text-red-800"><i class="fab fa-youtube text-2xl"></i></a>
+                                        <a href="#" class="text-green-600 hover:text-green-800"><i class="fab fa-whatsapp text-2xl"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Kontak -->
+                    <div data-aos="fade-left">
+                        <h2 class="text-2xl font-bold mb-6">✉️ KIRIM PESAN</h2>
+                        <form id="contactForm" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap *</label>
+                                <input type="text" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent" placeholder="Masukkan nama lengkap Anda">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                                <input type="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent" placeholder="email@contoh.com">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Nomor Telepon</label>
+                                <input type="tel" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent" placeholder="08xx-xxxx-xxxx">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Subjek *</label>
+                                <select required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent">
+                                    <option value="">Pilih Subjek</option>
+                                    <option value="pengaduan">Pengaduan</option>
+                                    <option value="pertanyaan">Pertanyaan</option>
+                                    <option value="saran">Saran</option>
+                                    <option value="layanan">Layanan Administrasi</option>
+                                    <option value="lainnya">Lainnya</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Pesan *</label>
+                                <textarea required rows="5" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent" placeholder="Tulis pesan Anda..."></textarea>
+                            </div>
+
+                            <button type="submit" class="w-full bg-red-600 text-white py-3 rounded-lg font-semibold hover:bg-red-700 transition">
+                                Kirim Pesan
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Peta Lokasi -->
+                <section class="mt-12" data-aos="zoom-in">
+                    <h2 class="text-2xl font-bold mb-6">🗺️ LOKASI KANTOR DESA</h2>
+                    <div id="map" class="map-container">
+                        <div class="map-loading">
+                            <div class="spinner"></div>
+                            <p class="text-center mt-2">Memuat peta...</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex justify-center space-x-4">
+                        <button onclick="openInGoogleMaps()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                            <i class="fas fa-map-marked-alt mr-2"></i>Buka di Google Maps
+                        </button>
+                        <button onclick="getDirections()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+                            <i class="fas fa-directions mr-2"></i>Petunjuk Arah
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Official Footer -->
+    <footer class="bg-gray-800 text-white mt-16">
+        <div class="container mx-auto px-4 py-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4">PEMERINTAH DESA ALLAERE</h3>
+                    <p class="text-gray-300 text-sm">Website resmi Pemerintah Desa Allaere sebagai sarana transparansi dan pelayanan publik.</p>
+                    <div class="mt-4 flex space-x-3">
+                        <a href="#" class="text-2xl hover:text-blue-400 transition">🇮🇩</a>
+                        <a href="#" class="text-2xl hover:text-green-400 transition">📱</a>
+                        <a href="#" class="text-2xl hover:text-red-400 transition">📧</a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-bold mb-4">LINK CEPAT</h3>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li><a href="#" onclick="showPage('profil', this)" class="hover:text-white transition">Profil Desa</a></li>
+                        <li><a href="#" onclick="showPage('pemerintahan', this)" class="hover:text-white transition">Pemerintahan</a></li>
+                        <li><a href="#" onclick="showPage('layanan', this)" class="hover:text-white transition">Layanan</a></li>
+                        <li><a href="#" onclick="showPage('kontak', this)" class="hover:text-white transition">Kontak</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-bold mb-4">LAYANAN ONLINE</h3>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li><a href="#" onclick="openModal('surat')" class="hover:text-white transition">Pengajuan Surat Online</a></li>
+                        <li><a href="#" onclick="openModal('penduduk')" class="hover:text-white transition">Data Kependudukan</a></li>
+                        <li><a href="#" onclick="openModal('pembangunan')" class="hover:text-white transition">Usulan Pembangunan</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-bold mb-4">KONTAK</h3>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li>📍 Jl. Poros Maccopa-Ammarang</li>
+                        <li>📞 +62 852-4054-3473</li>
+                        <li>📧 Desaallaere766@gmail.com</li>
+                        <li>🌐 www.desaallaere.id</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center">
+                <p class="text-sm text-gray-400">© 2025 PEMERINTAH DESA ALLAERE. Hak Cipta Dilindungi.</p>
+                <p class="text-xs text-gray-500 mt-2">Dikembangkan oleh Tim IT Desa Allaere | Powered by Government Technology</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop" class="back-to-top" onclick="scrollToTop()">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Dark Mode Toggle -->
+    <button id="darkModeToggle" class="dark-mode-toggle" onclick="toggleDarkMode()">
+        <i class="fas fa-moon" id="darkModeIcon"></i>
+    </button>
+
+    <!-- Notification Toast -->
+    <div id="notification" class="notification">
+        <div class="flex items-center">
+            <i class="fas fa-check-circle text-2xl mr-3" id="notificationIcon"></i>
+            <div>
+                <div class="font-semibold" id="notificationTitle">Notifikasi</div>
+                <div class="text-sm text-gray-600" id="notificationMessage">Pesan notifikasi</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- News Detail Modal -->
+    <div id="modalNewsDetail" class="modal">
+        <div class="modal-content">
+            <div class="bg-red-600 text-white p-6 rounded-t-lg">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold">📰 DETAIL BERITA</h2>
+                    <button onclick="closeModal('newsDetail')" class="text-white hover:text-gray-200 text-2xl">&times;</button>
+                </div>
+            </div>
+            <div class="p-6">
+                <div id="newsDetailContent">
+                    <!-- News detail content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals for Layanan Online -->
+    <!-- Modal Pengajuan Surat -->
+    <div id="modalSurat" class="modal">
+        <div class="modal-content">
+            <div class="bg-red-600 text-white p-6 rounded-t-lg">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold">📄 Pengajuan Surat Keterangan</h2>
+                    <button onclick="closeModal('surat')" class="text-white hover:text-gray-200 text-2xl">&times;</button>
+                </div>
+            </div>
+            <div class="p-6">
+                <form id="suratForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Jenis Surat</label>
+                        <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600">
+                            <option>Surat Keterangan Domisili</option>
+                            <option>Surat Keterangan Usaha</option>
+                            <option>Surat Keterangan Kelahiran</option>
+                            <option>Surat Keterangan Kematian</option>
+                            <option>Surat Pengantar SKCK</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
+                        <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600" placeholder="Masukkan nama lengkap">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">NIK</label>
+                        <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600" placeholder="Masukkan NIK">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Alamat</label>
+                        <textarea class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600" rows="3" placeholder="Masukkan alamat lengkap"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Keperluan</label>
+                        <textarea class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600" rows="3" placeholder="Jelaskan keperluan pembuatan surat"></textarea>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <p class="text-sm text-blue-800"><strong>Informasi:</strong></p>
+                        <ul class="text-sm text-blue-700 mt-2 space-y-1">
+                            <li>• Persyaratan: KTP, KK</li>
+                            <li>• Waktu pelayanan: 1-2 hari kerja</li>
+                            <li>• Biaya: Gratis sesuai Peraturan Pemerintah</li>
+                        </ul>
+                    </div>
+                    <button type="submit" class="w-full bg-red-600 text-white py-3 rounded-lg font-semibold hover:bg-red-700 transition">
+                        Ajukan Permohonan
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Informasi BLT-DD -->
+    <div id="modalBLT" class="modal">
+        <div class="modal-content">
+            <div class="bg-green-600 text-white p-6 rounded-t-lg">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold">💰 Informasi BLT-DD</h2>
+                    <button onclick="closeModal('blt')" class="text-white hover:text-gray-200 text-2xl">&times;</button>
+                </div>
+            </div>
+            <div class="p-6">
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3">Program Bantuan Langsung Tunai Dana Desa</h3>
+                    <p class="text-gray-600">BLT-DD adalah program bantuan sosial yang bersumber dari Dana Desa untuk membantu masyarakat miskin terdampak COVID-19 dan kondisi ekonomi sulit.</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-blue-50 p-4 rounded-lg hover-lift">
+                        <h4 class="font-semibold mb-2">📊 Data Penerima Tahun 2025</h4>
+                        <ul class="space-y-1 text-sm">
+                            <li>Jumlah KPM: 150 Keluarga</li>
+                            <li>Nilai Bantuan: Rp 300.000/bulan</li>
+                            <li>Total Anggaran: Rp 540.000.000</li>
+                        </ul>
+                    </div>
+                    <div class="bg-yellow-50 p-4 rounded-lg hover-lift">
+                        <h4 class="font-semibold mb-2">📅 Jadwal Penyaluran</h4>
+                        <ul class="space-y-1 text-sm">
+                            <li>Tahap I: Januari - Maret</li>
+                            <li>Tahap II: April - Juni</li>
+                            <li>Tahap III: Juli - September</li>
+                            <li>Tahap IV: Oktober - Desember</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h4 class="font-semibold mb-2">📋 Kriteria Penerima</h4>
+                    <ul class="list-disc list-inside space-y-1 text-sm text-gray-600">
+                        <li>Warga Desa Allaere yang terdaftar dalam DTKS</li>
+                        <li>Masyarakat miskin/rentan miskin terdampak COVID-19</li>
+                        <li>Belum pernah menerima bansos lainnya</li>
+                        <li>Bukan Aparatur Sipil Negara/TNI/Polri</li>
+                    </ul>
+                </div>
+
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <h4 class="font-semibold mb-2">✅ Cara Pengajuan</h4>
+                    <ol class="list-decimal list-inside space-y-1 text-sm text-gray-700">
+                        <li>Mengajukan permohonan ke Kantor Desa</li>
+                        <li>Menyerahkan kelengkapan berkas (KTP, KK, Surat Keterangan Miskin)</li>
+                        <li>Verifikasi data oleh Tim Verifikasi Desa</li>
+                        <li>Penetapan penerima oleh Kepala Desa</li>
+                        <li>Pengumuman dan pencairan dana</li>
+                    </ol>
+                </div>
+
+                <button onclick="closeModal('blt')" class="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition mt-6">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Data Kependudukan -->
+    <div id="modalPenduduk" class="modal">
+        <div class="modal-content">
+            <div class="bg-blue-600 text-white p-6 rounded-t-lg">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold">📊 Data Kependudukan</h2>
+                    <button onclick="closeModal('penduduk')" class="text-white hover:text-gray-200 text-2xl">&times;</button>
+                </div>
+            </div>
+            <div class="p-6">
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3">Data Kependudukan Desa Allaere</h3>
+                    <p class="text-gray-600">Berikut adalah data kependudukan terbaru Desa Allaere per Desember 2024.</p>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-gray-50 p-4 rounded-lg text-center hover-lift">
+                        <div class="text-2xl font-bold text-blue-600">2.751</div>
+                        <div class="text-sm text-gray-600">Total Jiwa</div>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg text-center hover-lift">
+                        <div class="text-2xl font-bold text-green-600">1.307</div>
+                        <div class="text-sm text-gray-600">Laki-laki</div>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg text-center hover-lift">
+                        <div class="text-2xl font-bold text-pink-600">1.444</div>
+                        <div class="text-sm text-gray-600">Perempuan</div>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg text-center hover-lift">
+                        <div class="text-2xl font-bold text-purple-600">823</div>
+                        <div class="text-sm text-gray-600">KK</div>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h4 class="font-semibold mb-3">📊 Data per Dusun</h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse border border-gray-300">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="border border-gray-300 px-4 py-2 text-left">Dusun</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-center">KK</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-center">Laki-laki</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-center">Perempuan</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-center">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="border border-gray-300 px-4 py-2">Cambayya</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">129</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">195</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">223</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center font-semibold">418</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="border border-gray-300 px-4 py-2">Tanadidi</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">158</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">262</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">288</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center font-semibold">550</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="border border-gray-300 px-4 py-2">Bontotangnga</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">244</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">377</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">395</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center font-semibold">773</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="border border-gray-300 px-4 py-2">Bontocinde</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">122</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">202</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">211</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center font-semibold">413</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="border border-gray-300 px-4 py-2">Biringkaloro</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">73</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">117</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">147</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center font-semibold">264</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <p class="text-sm text-blue-800"><strong>Catatan:</strong></p>
+                    <p class="text-sm text-blue-700 mt-1">Data kependudukan diperbarui setiap bulan. Untuk informasi lebih lanjut atau perubahan data, silakan hubungi Kantor Desa.</p>
+                </div>
+
+                <button onclick="closeModal('penduduk')" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition mt-6">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Usulan Pembangunan -->
+    <div id="modalPembangunan" class="modal">
+        <div class="modal-content">
+            <div class="bg-orange-600 text-white p-6 rounded-t-lg">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold">🏗️ Usulan Pembangunan</h2>
+                    <button onclick="closeModal('pembangunan')" class="text-white hover:text-gray-200 text-2xl">&times;</button>
+                </div>
+            </div>
+            <div class="p-6">
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3">Portal Usulan Pembangunan Desa</h3>
+                    <p class="text-gray-600">Sampaikan usulan pembangunan untuk kemajuan Desa Allaere. Usulan akan ditindaklanjuti dalam Musrenbangdes.</p>
+                </div>
+
+                <form id="pembangunanForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Pelapor</label>
+                        <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-600" placeholder="Masukkan nama lengkap">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Kategori Usulan</label>
+                        <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-600">
+                            <option>Infrastruktur Jalan</option>
+                            <option>Drainase</option>
+                            <option>Penerangan Jalan</option>
+                            <option>Fasilitas Pendidikan</option>
+                            <option>Fasilitas Kesehatan</option>
+                            <option>Fasilitas Umum Lainnya</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Lokasi/Ruang Lingkup</label>
+                        <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-600" placeholder="Contoh: Jl. Poros Dusun Bonto Matene">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Detail Usulan</label>
+                        <textarea class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-600" rows="4" placeholder="Jelaskan secara detail usulan pembangunan yang diajukan"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Manfaat bagi Masyarakat</label>
+                        <textarea class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-600" rows="3" placeholder="Jelaskan manfaat dari pembangunan yang diusulkan"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Estimasi Kebutuhan Dana (Opsional)</label>
+                        <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-600" placeholder="Contoh: Rp 50.000.000">
+                    </div>
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <p class="text-sm text-yellow-800"><strong>Panduan:</strong></p>
+                        <ul class="text-sm text-yellow-700 mt-2 space-y-1">
+                            <li>• Usulan dapat diajukan oleh seluruh warga Desa Allaere</li>
+                            <li>• Usulan akan diverifikasi oleh Tim Pembangunan Desa</li>
+                            <li>• Usulan yang disetujui akan dibahas dalam Musrenbangdes</li>
+                            <li>• Prioritas diberikan pada usulan yang bermanfaat untuk banyak orang</li>
+                        </ul>
+                    </div>
+                    <button type="submit" class="w-full bg-orange-600 text-white py-3 rounded-lg font-semibold hover:bg-orange-700 transition">
+                        Kirim Usulan
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- External Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Main JavaScript -->
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+
+        // Global Variables
+        let map = null;
+        let currentPage = 'beranda';
+        let isDarkMode = false;
+        let newsData = [];
+        let announcementData = [];
+        let documentData = [];
+
+        // Koordinat Desa Allaere dari Google Maps link
+        const villageCoords = [-5.0187, 119.5474];
+        const googleMapsUrl = 'https://maps.app.goo.gl/rdq9AmFVtKoN9SwR7';
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            initMap();
+            initScrollEvents();
+            initFormHandlers();
+            initCounters();
+            initProgressBars();
+            checkDarkModePreference();
+            initSearch();
+            initDocumentUpload();
+            loadNews();
+            loadAnnouncements();
+            loadDocuments();
+        }
+
+        // Initialize Map
+        function initMap() {
+            const mapElement = document.getElementById('map');
+            if (mapElement) {
+                // Show loading state
+                mapElement.innerHTML = '<div class="map-loading"><div class="spinner"></div><p class="text-center mt-2">Memuat peta...</p></div>';
+
+                // Inisialisasi peta dengan koordinat yang benar
+                setTimeout(() => {
+                    mapElement.innerHTML = ''; // Clear loading state
+
+                    map = L.map('map').setView(villageCoords, 15);
+
+                    // Tambahkan tile layer dari OpenStreetMap
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | <a href="https://www.google.com/maps/place/?api=1&query=' + villageCoords[0] + ',' + villageCoords[1] + '" target="_blank">Lihat di Google Maps</a>',
+                        maxZoom: 19
+                    }).addTo(map);
+
+                    // Buat ikon kustom untuk marker
+                    const customIcon = L.divIcon({
+                        html: '<div style="background-color: #BE0027; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.4); font-size: 20px;">📍</div>',
+                        iconSize: [40, 40],
+                        iconAnchor: [20, 40],
+                        popupAnchor: [0, -40],
+                        className: 'custom-div-icon'
+                    });
+
+                    // Tambahkan marker ke peta
+                    const marker = L.marker(villageCoords, {
+                        icon: customIcon
+                    }).addTo(map);
+
+                    // Tambahkan popup dengan informasi lengkap
+                    marker.bindPopup(`
+                        <div style="text-align: center; padding: 10px;">
+                            <h3 style="margin: 0 0 10px 0; color: #BE0027;">KANTOR DESA ALLAERE</h3>
+                            <p style="margin: 5px 0;"><strong>Alamat:</strong><br>Jl. Poros Maccopa-Ammarang<br>Dusun Bontotangnga<br>Kec. Tanralili, Kab. Maros</p>
+                            <p style="margin: 5px 0;"><strong>Kode Pos:</strong> 90553</p>
+                            <p style="margin: 5px 0;"><strong>Telepon:</strong> (0411) 876543</p>
+                            <hr style="margin: 10px 0;">
+                            <a href="${googleMapsUrl}" target="_blank" style="display: inline-block; background: #4285F4; color: white; padding: 8px 12px; text-decoration: none; border-radius: 4px; margin-top: 5px;">
+                                <i class="fas fa-map-marked-alt"></i> Buka di Google Maps
+                            </a>
+                        </div>
+                    `).openPopup();
+
+                    // Tambahkan kontrol zoom
+                    L.control.zoom({
+                        position: 'topright'
+                    }).addTo(map);
+
+                    // Tambahkan kontrol scale
+                    L.control.scale({
+                        position: 'bottomleft',
+                        metric: true,
+                        imperial: false
+                    }).addTo(map);
+
+                    // Tambahkan circle untuk menunjukkan area desa
+                    L.circle(villageCoords, {
+                        color: '#BE0027',
+                        fillColor: '#BE0027',
+                        fillOpacity: 0.1,
+                        radius: 500 // radius dalam meter
+                    }).addTo(map);
+
+                    // Event listener untuk map click
+                    map.on('click', function(e) {
+                        console.log('Clicked at: ' + e.latlng.toString());
+                    });
+
+                    // Event listener untuk map load
+                    map.whenReady(function() {
+                        console.log('Map is ready');
+                        showNotification('success', 'Peta berhasil dimuat');
+                    });
+                }, 1000);
+            }
+        }
+
+        // Fungsi untuk membuka di Google Maps
+        function openInGoogleMaps() {
+            window.open(googleMapsUrl, '_blank');
+            showNotification('info', 'Membuka lokasi di Google Maps...');
+        }
+
+        // Fungsi untuk mendapatkan petunjuk arah
+        function getDirections() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const userLat = position.coords.latitude;
+                    const userLng = position.coords.longitude;
+                    const directionsUrl = `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${villageCoords[0]},${villageCoords[1]}`;
+                    window.open(directionsUrl, '_blank');
+                    showNotification('success', 'Mendapatkan petunjuk arah dari lokasi Anda...');
+                }, function(error) {
+                    // Jika tidak bisa mendapatkan lokasi, buka Google Maps dengan tujuan saja
+                    const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${villageCoords[0]},${villageCoords[1]}`;
+                    window.open(directionsUrl, '_blank');
+                    showNotification('info', 'Membuka petunjuk arah di Google Maps...');
+                });
+            } else {
+                // Jika browser tidak mendukung geolocation
+                const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${villageCoords[0]},${villageCoords[1]}`;
+                window.open(directionsUrl, '_blank');
+                showNotification('info', 'Membuka petunjuk arah di Google Maps...');
+            }
+        }
+
+        // Scroll Events
+        function initScrollEvents() {
+            window.addEventListener('scroll', function() {
+                updateProgressBar();
+                updateBackToTopButton();
+            });
+        }
+
+        function updateProgressBar() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrollPercent = (scrollTop / scrollHeight) * 100;
+            document.getElementById('progressBar').style.width = scrollPercent + '%';
+        }
+
+        function updateBackToTopButton() {
+            const backToTop = document.getElementById('backToTop');
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('show');
+            } else {
+                backToTop.classList.remove('show');
+            }
+        }
+
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Form Handlers
+        function initFormHandlers() {
+            // Contact Form
+            const contactForm = document.getElementById('contactForm');
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    showNotification('success', 'Pesan Anda telah terkirim! Kami akan segera menghubungi Anda.');
+                    this.reset();
+                });
+            }
+
+            // Surat Form
+            const suratForm = document.getElementById('suratForm');
+            if (suratForm) {
+                suratForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    showNotification('success', 'Pengajuan surat telah diterima dan akan diproses.');
+                    this.reset();
+                    closeModal('surat');
+                });
+            }
+
+            // Pembangunan Form
+            const pembangunanForm = document.getElementById('pembangunanForm');
+            if (pembangunanForm) {
+                pembangunanForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    showNotification('success', 'Usulan pembangunan telah diterima dan akan ditindaklanjuti.');
+                    this.reset();
+                    closeModal('pembangunan');
+                });
+            }
+        }
+
+        // Counter Animation
+        function initCounters() {
+            const counters = document.querySelectorAll('.stats-counter');
+            const speed = 200;
+
+            counters.forEach(counter => {
+                const animate = () => {
+                    const value = +counter.getAttribute('data-target');
+                    const data = +counter.innerText.replace(/[^0-9.-]+/g, '');
+                    const time = value / speed;
+
+                    if (data < value) {
+                        counter.innerText = Math.ceil(data + time).toLocaleString('id-ID');
+                        setTimeout(animate, 1);
+                    } else {
+                        counter.innerText = value.toLocaleString('id-ID');
+                    }
+                }
+
+                // Start animation when element is in view
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            animate();
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                });
+
+                observer.observe(counter);
+            });
+        }
+
+        // Progress Bar Animation
+        function initProgressBars() {
+            // Progress percent animation
+            const progressPercents = document.querySelectorAll('.progress-percent');
+            progressPercents.forEach(percent => {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const target = +percent.getAttribute('data-target');
+                            let current = 0;
+                            const increment = target / 50;
+
+                            const updatePercent = () => {
+                                if (current < target) {
+                                    current += increment;
+                                    percent.innerText = Math.ceil(current) + '%';
+                                    setTimeout(updatePercent, 30);
+                                } else {
+                                    percent.innerText = target + '%';
+                                }
+                            };
+
+                            updatePercent();
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                });
+
+                observer.observe(percent);
+            });
+        }
+
+        // Page Navigation
+        function showPage(pageId, buttonElement) {
+            // Hide all pages
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.remove('active');
+            });
+
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+
+            // Update navigation
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            if (buttonElement) {
+                buttonElement.classList.add('active');
+            }
+
+            // Update breadcrumb
+            updateBreadcrumb(pageId);
+
+            // Reinitialize map if showing contact page
+            if (pageId === 'kontak') {
+                setTimeout(() => {
+                    if (map) {
+                        map.invalidateSize();
+                    } else {
+                        initMap();
+                    }
+                }, 100);
+            }
+
+            currentPage = pageId;
+
+            // Scroll to top
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        function updateBreadcrumb(pageId) {
+            const pageNames = {
+                'beranda': 'Beranda',
+                'profil': 'Profil Desa',
+                'pemerintahan': 'Pemerintahan',
+                'informasi': 'Informasi Publik',
+                'layanan': 'Layanan Publik',
+                'kontak': 'Hubungi Kami',
+                'pengumuman': 'Pengumuman'
+            };
+
+            document.getElementById('currentPageName').textContent = pageNames[pageId] || 'Beranda';
+        }
+
+        // Modal Functions
+        function openModal(serviceType) {
+            const modalId = 'modal' + serviceType.charAt(0).toUpperCase() + serviceType.slice(1);
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeModal(serviceType) {
+            const modalId = 'modal' + serviceType.charAt(0).toUpperCase() + serviceType.slice(1);
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Close modal when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                }
+            });
+        });
+
+        // Notification System
+        function showNotification(type, message) {
+            const notification = document.getElementById('notification');
+            const icon = document.getElementById('notificationIcon');
+            const messageEl = document.getElementById('notificationMessage');
+
+            // Reset classes
+            notification.className = 'notification';
+
+            // Set type-specific styles
+            switch (type) {
+                case 'success':
+                    notification.classList.add('success');
+                    icon.className = 'fas fa-check-circle text-green-500 text-2xl mr-3';
+                    break;
+                case 'error':
+                    notification.classList.add('error');
+                    icon.className = 'fas fa-exclamation-circle text-red-500 text-2xl mr-3';
+                    break;
+                case 'info':
+                    notification.classList.add('info');
+                    icon.className = 'fas fa-info-circle text-blue-500 text-2xl mr-3';
+                    break;
+            }
+
+            messageEl.textContent = message;
+            notification.classList.add('show');
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Dark Mode
+        function toggleDarkMode() {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('dark-mode');
+
+            const icon = document.getElementById('darkModeIcon');
+            if (isDarkMode) {
+                icon.className = 'fas fa-sun';
+                localStorage.setItem('darkMode', 'true');
+            } else {
+                icon.className = 'fas fa-moon';
+                localStorage.setItem('darkMode', 'false');
+            }
+        }
+
+        function checkDarkModePreference() {
+            const darkMode = localStorage.getItem('darkMode');
+            if (darkMode === 'true') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('darkModeIcon').className = 'fas fa-sun';
+                isDarkMode = true;
+            }
+        }
+
+        // Search Functionality
+        function initSearch() {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('keyup', function(e) {
+                    if (e.key === 'Enter') {
+                        const searchTerm = e.target.value.toLowerCase();
+                        if (searchTerm) {
+                            performSearch(searchTerm);
+                        }
+                    }
+                });
+            }
+        }
+
+        function performSearch(term) {
+            showNotification('info', `Mencari "${term}"...`);
+            // Implementasi pencarian yang lebih kompleks bisa ditambahkan di sini
+        }
+
+        // Document Upload Functionality
+        function initDocumentUpload() {
+            const documentUpload = document.getElementById('documentUpload');
+            const fileInput = document.getElementById('fileInput');
+
+            if (documentUpload && fileInput) {
+                documentUpload.addEventListener('click', function() {
+                    fileInput.click();
+                });
+
+                documentUpload.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    this.classList.add('dragover');
+                });
+
+                documentUpload.addEventListener('dragleave', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('dragover');
+                });
+
+                documentUpload.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('dragover');
+
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        handleFileUpload(files[0]);
+                    }
+                });
+
+                fileInput.addEventListener('change', function(e) {
+                    if (e.target.files.length > 0) {
+                        handleFileUpload(e.target.files[0]);
+                    }
+                });
+            }
+        }
+
+        function handleFileUpload(file) {
+            // Validasi file
+            const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+            const maxSize = 10 * 1024 * 1024; // 10MB
+
+            if (!validTypes.includes(file.type)) {
+                showNotification('error', 'Format file tidak didukung. Harap upload file PDF, DOC, atau DOCX.');
+                return;
+            }
+
+            if (file.size > maxSize) {
+                showNotification('error', 'Ukuran file terlalu besar. Maksimal ukuran file adalah 10MB.');
+                return;
+            }
+
+            // Simulasi upload file
+            showNotification('info', `Mengunggah "${file.name}"...`);
+
+            setTimeout(() => {
+                // Tambahkan file ke daftar dokumen
+                const newDocument = {
+                    id: Date.now(),
+                    name: file.name,
+                    date: new Date().toLocaleDateString('id-ID'),
+                    size: (file.size / 1024).toFixed(2) + ' KB'
+                };
+
+                documentData.push(newDocument);
+                renderDocuments();
+
+                showNotification('success', `File "${file.name}" berhasil diunggah.`);
+            }, 1500);
+        }
+
+        function renderDocuments() {
+            const documentItems = document.getElementById('documentItems');
+            if (!documentItems) return;
+
+            documentItems.innerHTML = '';
+
+            if (documentData.length === 0) {
+                documentItems.innerHTML = '<p class="text-gray-500">Belum ada dokumen yang diunggah.</p>';
+                return;
+            }
+
+            documentData.forEach(doc => {
+                const item = document.createElement('div');
+                item.className = 'document-item';
+                item.innerHTML = `
+                    <div>
+                        <div class="document-name">${doc.name}</div>
+                        <div class="document-date">${doc.date} | ${doc.size}</div>
+                    </div>
+                    <div class="document-actions">
+                        <button class="btn-download" onclick="downloadDocument('${doc.id}')">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button class="btn-delete" onclick="deleteDocument('${doc.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                documentItems.appendChild(item);
+            });
+        }
+
+        function downloadDocument(docId) {
+            // Simulasi download
+            const doc = documentData.find(d => d.id == docId);
+            if (doc) {
+                showNotification('info', `Mengunduh "${doc.name}"...`);
+                setTimeout(() => {
+                    showNotification('success', `File "${doc.name}" berhasil diunduh.`);
+                }, 1000);
+            }
+        }
+
+        function deleteDocument(docId) {
+            // Hapus dokumen dari array
+            documentData = documentData.filter(d => d.id != docId);
+            renderDocuments();
+            showNotification('success', 'Dokumen berhasil dihapus.');
+        }
+
+        // Load News
+        function loadNews() {
+            // Simulasi data berita dengan konten lengkap
+            newsData = [{
+                id: 1,
+                title: 'Musyawarah Desa Bahas Program Prioritas 2025',
+                date: 'Senin, 15 Januari 2025',
+                category: 'PEMERINTAHAN',
+                excerpt: 'Musyawarah desa membahas program prioritas pembangunan untuk tahun 2025 termasuk perbaikan infrastruktur jalan desa dan pembangunan posyandu di Dusun Bonto Matene.',
+                image: 'https://picsum.photos/seed/musyawarah/800/400.jpg',
+                author: 'Admin Desa',
+                content: `
+                        <p>Musyawarah Desa (Musdes) Allaere yang dilaksanakan pada hari Senin, 15 Januari 2026 di Kantor Desa Allaere telah membahas dan menetapkan program prioritas pembangunan untuk tahun anggaran 2025. Acara yang dihadiri oleh Kepala Desa, BPD, perangkat desa, serta perwakilan masyarakat dari lima dusun berlangsung dengan khidmat dan penuh kekeluargaan.</p>
+                        
+                        <h2>Hasil Pembahasan Musyawarah</h2>
+                        <p>Berdasarkan hasil pembahasan yang intensif, terdapat beberapa program prioritas yang akan menjadi fokus pembangunan Desa Allaere tahun 2025:</p>
+                        
+                        <h3>1. Infrastruktur Jalan Desa</h3>
+                        <p>Perbaikan jalan desa menjadi prioritas utama mengingat kondisi beberapa jalan di Dusun Biringkaloro dan Bontocinde yang sudah mengalami kerusakan. Anggaran yang dialokasikan sebesar Rp 450.000.000 untuk perbaikan jalan sepanjang 2,5 kilometer.</p>
+                        
+                        <h3>2. Pembangunan Posyandu</h3>
+                        <p>Pembangunan Posyandu baru di Dusun Bonto Matene akan meningkatkan pelayanan kesehatan ibu dan anak. Bangunan Posyandu akan dilengkapi dengan fasilitas lengkap termasuk ruang pemeriksaan, toilet, dan halaman bermain anak.</p>
+                        
+                        <h3>3. Penerangan Jalan Umum</h3>
+                        <p>Penambahan 50 unit lampu jalan LED di lokasi-lokasi strategis untuk meningkatkan keamanan dan kenyamanan warga pada malam hari.</p>
+                        
+                        <h2>Partisipasi Masyarakat</h2>
+                        <p>Musyawarah desa ini dihadiri oleh lebih dari 100 orang perwakilan masyarakat. Antusiasme masyarakat sangat tinggi, terlihat dari banyaknya usulan dan masukan yang disampaikan secara langsung oleh warga.</p>
+                        
+                        <blockquote>"Kami sangat mengapresiasi partisipasi aktif masyarakat dalam musyawarah ini. Semua usulan akan kami pertimbangkan secara matang untuk kemajuan bersama," ujar Kepala Desa Allaere, Bapak Haris, S.H.</blockquote>
+                        
+                        <h2>Tindak Lanjut</h2>
+                        <p>Hasil keputusan musyawarah desa akan segera ditindaklanjuti dengan:</p>
+                        <ul>
+                            <li>Penyusunan Rencana Kerja Pemerintah Desa (RKP Desa) 2025</li>
+                            <li>Pengajuan anggaran dalam APBDes 2025</li>
+                            <li>Koordinasi dengan pemerintah kecamatan untuk dukungan teknis</li>
+                            <li>Sosialisasi program kepada seluruh masyarakat</li>
+                        </ul>
+                        
+                        <p>Dengan adanya musyawarah desa yang partisipatif ini, diharapkan pembangunan di Desa Allaere dapat berjalan sesuai dengan kebutuhan dan aspirasi masyarakat.</p>
+                    `
+            }, {
+                id: 2,
+                title: 'Penyaluran BLT-DD Tahap I Tahun 2025',
+                date: 'Kamis, 10 Januari 2025',
+                category: 'BANTUAN SOSIAL',
+                excerpt: 'Pemerintah Desa Allaere telah menyalurkan Bantuan Langsung Tunai Dana Desa (BLT-DD) Tahap I Tahun 2025 kepada 150 Keluarga Penerima Manfaat (KPM).',
+                image: 'https://picsum.photos/seed/blt/800/400.jpg',
+                author: 'Admin Desa',
+                content: `
+                        <p>Pemerintah Desa Allaere pada hari Kamis, 10 Januari 2025 telah menyalurkan Bantuan Langsung Tunai Dana Desa (BLT-DD) Tahap I Tahun 2025. Penyaluran dilakukan secara simbolis di Kantor Desa Allaere dan dihadiri oleh Camat Tanralili, Kepala Desa, BPD, serta seluruh penerima manfaat.</p>
+                        
+                        <h2>Data Penerima BLT-DD</h2>
+                        <p>Untuk tahap I tahun 2025, terdapat 150 Keluarga Penerima Manfaat (KPM) yang menerima bantuan. Nilai bantuan yang disalurkan sebesar Rp 300.000 per KPM per bulan untuk periode Januari-Maret 2025.</p>
+                        
+                        <h3>Kriteria Penerima</h3>
+                        <p>Penerima BLT-DD ditetapkan berdasarkan kriteria berikut:</p>
+                        <ul>
+                            <li>Warga Desa Allaere yang terdaftar dalam Data Terpadu Kesejahteraan Sosial (DTKS)</li>
+                            <li>Masyarakat miskin atau rentan miskin yang terdampak COVID-19</li>
+                            <li>Belum pernah menerima bantuan sosial lainnya</li>
+                            <li>Bukan Aparatur Sipil Negara, TNI, atau Polri</li>
+                        </ul>
+                        
+                        <h2>Mekanisme Penyaluran</h2>
+                        <p>Penyaluran BLT-DD dilakukan dengan mekanisme:</p>
+                        <ol>
+                            <li>Verifikasi data calon penerima oleh Tim Verifikasi Desa</li>
+                            <li>Penetapan penerima oleh Kepala Desa</li>
+                            <li>Pengumuman penerima selama 3 hari</li>
+                            <li>Penyaluran langsung kepada penerima melalui transfer bank</li>
+                        </ol>
+                        
+                        <h2>Tanggapan Penerima</h2>
+                        <p>Salah satu penerima manfaat, Ibu Salmah (45 tahun) warga Dusun Cambayya mengucapkan terima kasih atas bantuan yang diterima.</p>
+                        
+                        <blockquote>"Bantuan ini sangat membantu kami untuk memenuhi kebutuhan sehari-hari. Kami berharap program ini dapat terus berlanjut," kata Ibu Salmah dengan mata berkaca-kaca.</blockquote>
+                        
+                        <h2>Pengawasan dan Evaluasi</h2>
+                        <p>Untuk memastikan penyaluran berjalan transparan dan tepat sasaran, Pemerintah Desa Allaere melakukan:</p>
+                        <ul>
+                            <li>Pengawasan oleh BPD dan masyarakat</li>
+                            <li>Evaluasi berkala terhadap efektivitas program</li>
+                            <li>Pemutakhiran data penerima setiap 6 bulan</li>
+                        </ul>
+                        
+                        <p>BLT-DD diharapkan dapat meringankan beban masyarakat yang terdampak ekonomi, khususnya di masa pandemi dan pasca-pandemi COVID-19.</p>
+                    `
+            }, {
+                id: 3,
+                title: 'Pelatihan Kewirausahaan bagi UMKM Desa',
+                date: 'Selasa, 8 Januari 2025',
+                category: 'PEMBERDAYAAN',
+                excerpt: 'Dinas Koperasi dan UMKM Kabupaten Maros bekerja sama dengan Pemerintah Desa Allaere menyelenggarakan pelatihan kewirausahaan bagi pelaku UMKM di desa.',
+                image: 'https://picsum.photos/seed/umkm/800/400.jpg',
+                author: 'Admin Desa',
+                content: `
+                        <p>Dinas Koperasi dan UMKM Kabupaten Maros bekerja sama dengan Pemerintah Desa Allaere menyelenggarakan pelatihan kewirausahaan bagi pelaku Usaha Mikro, Kecil, dan Menengah (UMKM) di Desa Allaere. Pelatihan yang dilaksanakan selama 2 hari pada tanggal 7-8 Januari 2025 ini diikuti oleh 50 pelaku UMKM dari berbagai sektor.</p>
+                        
+                        <h2>Tujuan Pelatihan</h2>
+                        <p>Pelatihan kewirausahaan ini bertujuan untuk:</p>
+                        <ul>
+                            <li>Meningkatkan kapasitas dan kemampuan pengelolaan usaha</li>
+                            <li>Memberikan pemahaman tentang manajemen keuangan yang baik</li>
+                            <li>Mengembangkan strategi pemasaran digital</li>
+                            <li>Meningkatkan akses permodalan melalui program kredit usaha</li>
+                        </ul>
+                        
+                        <h2>Materi Pelatihan</h2>
+                        <p>Pelatihan mencakup beberapa materi penting:</p>
+                        
+                        <h3>1. Manajemen Usaha</h3>
+                        <p>Peserta diajarkan tentang perencanaan bisnis, pengelolaan operasional, dan pengambilan keputusan strategis untuk pengembangan usaha.</p>
+                        
+                        <h3>2. Keuangan Dasar</h3>
+                        <p>Materi tentang pencatatan keuangan sederhana, analisis biaya, dan penentuan harga jual yang kompetitif.</p>
+                        
+                        <h3>3. Pemasaran Digital</h3>
+                        <p>Pelatihan penggunaan media sosial dan marketplace untuk memperluas jangkauan pemasaran produk UMKM.</p>
+                        
+                        <h3>4. Akses Permodalan</h3>
+                        <p>Informasi tentang berbagai program kredit usaha dari bank dan lembaga keuangan lainnya.</p>
+                        
+                        <h2>Narasumber Ahli</h2>
+                        <p>Pelatihan ini menghadirkan narasumber ahli dari:</p>
+                        <ul>
+                            <li>Dinas Koperasi dan UMKM Kabupaten Maros</li>
+                            <li>Praktisi bisnis lokal yang sukses</li>
+                            <li>Perwakilan Bank BRI Cabang Maros</li>
+                            <li>Konsultan bisnis independen</li>
+                        </ul>
+                        
+                        <h2>Hasil yang Diharapkan</h2>
+                        <p>Dengan adanya pelatihan ini, diharapkan para pelaku UMKM di Desa Allaere dapat:</p>
+                        <ol>
+                            <li>Meningkatkan omset penjualan minimal 20%</li>
+                            <li>Mengembangkan produk inovatif baru</li>
+                            <li>Masuk ke pasar digital</li>
+                            <li>Menciptakan lapangan kerja baru</li>
+                        </ol>
+                        
+                        <h2>Dukungan Lanjutan</h2>
+                        <p>Pemerintah Desa Allaere akan memberikan dukungan lanjutan berupa:</p>
+                        <ul>
+                            <li>Pendampingan rutin selama 6 bulan</li>
+                            <li>Fasilitasi perizinan usaha</li>
+                            <li>Promosi produk melalui website desa</li>
+                            <li>Kemitraan dengan investor lokal</li>
+                        </ul>
+                        
+                        <p>Pelatihan ini merupakan komitmen Pemerintah Desa Allaere untuk mendorong pertumbuhan ekonomi lokal melalui pemberdayaan UMKM.</p>
+                    `
+            }];
+
+            renderNews();
+        }
+
+        function renderNews() {
+            const newsContainer = document.getElementById('newsContainer');
+            if (!newsContainer) return;
+
+            newsContainer.innerHTML = '';
+
+            newsData.forEach(news => {
+                const newsItem = document.createElement('article');
+                newsItem.className = 'news-item';
+                newsItem.innerHTML = `
+                    <div class="flex items-center text-sm text-gray-500 mb-2">
+                        <span class="mr-4">📅 ${news.date}</span>
+                        <span class="bg-red-600 text-white px-2 py-1 rounded text-xs">${news.category}</span>
+                    </div>
+                    <img src="${news.image}" alt="${news.title}" class="news-image">
+                    <h3 class="news-title">${news.title}</h3>
+                    <p class="news-excerpt">${news.excerpt}</p>
+                    <a href="#" class="news-read-more" onclick="showNewsDetail(${news.id}); return false;">Baca Selengkapnya →</a>
+                `;
+                newsContainer.appendChild(newsItem);
+            });
+        }
+
+        function loadMoreNews() {
+            // Simulasi memuat lebih banyak berita
+            showNotification('info', 'Memuat lebih banyak berita...');
+
+            setTimeout(() => {
+                // Tambahkan berita baru
+                const newNews = {
+                    id: newsData.length + 1,
+                    title: 'Peresmian Posyandu Baru di Dusun Biringkaloro',
+                    date: 'Jumat, 5 Januari 2025',
+                    category: 'KESEHATAN',
+                    excerpt: 'Kepala Desa Allaere meresmikan Posyandu baru di Dusun Biringkaloro untuk meningkatkan pelayanan kesehatan ibu dan anak.',
+                    image: 'https://picsum.photos/seed/posyandu/800/400.jpg',
+                    author: 'Admin Desa',
+                    content: `
+                        <p>Kepala Desa Allaere, Bapak Haris, S.H. meresmikan Posyandu baru di Dusun Biringkaloro pada hari Jumat, 5 Januari 2025. Peresmian ini menandai dimulainya operasional Posyandu Melati yang akan melayani kesehatan ibu dan anak di wilayah Dusun Biringkaloro dan sekitarnya.</p>
+                        
+                        <h2>Fasilitas Posyandu</h2>
+                        <p>Posyandu baru ini dilengkapi dengan berbagai fasilitas:</p>
+                        <ul>
+                            <li>Ruang pemeriksaan kesehatan</li>
+                            <li>Ruang imunisasi</li>
+                            <li>Ruang konsultasi gizi</li>
+                            <li>Toilet dan tempat cuci tangan</li>
+                            <li>Halaman bermain anak</li>
+                        </ul>
+                        
+                        <h2>Layanan yang Tersedia</h2>
+                        <p>Posyandu Melati akan menyediakan layanan:</p>
+                        <ol>
+                            <li>Pemeriksaan kesehatan ibu hamil</li>
+                            <li>Imunisasi bayi dan balita</li>
+                            <li>Pemberian makanan tambahan (PMT)</li>
+                            <li>Konsultasi gizi</li>
+                            <li>Pendidikan kesehatan</li>
+                        </ol>
+                        
+                        <p>Dengan adanya Posyandu ini, diharapkan pelayanan kesehatan dasar bagi ibu dan anak di Dusun Biringkaloro dapat lebih mudah diakses.</p>
+                    `
+                };
+
+                newsData.push(newNews);
+                renderNews();
+                showNotification('success', 'Berita berhasil dimuat.');
+            }, 1000);
+        }
+
+        function showNewsDetail(newsId) {
+            const news = newsData.find(n => n.id === newsId);
+            if (news) {
+                const newsDetailContent = document.getElementById('newsDetailContent');
+
+                // Generate related news (exclude current news)
+                const relatedNews = newsData.filter(n => n.id !== newsId).slice(0, 3);
+
+                newsDetailContent.innerHTML = `
+                    <div class="news-detail-content">
+                        <div class="flex items-center text-sm text-gray-500 mb-4">
+                            <span class="mr-4">📅 ${news.date}</span>
+                            <span class="bg-red-600 text-white px-2 py-1 rounded text-xs">${news.category}</span>
+                        </div>
+                        <img src="${news.image}" alt="${news.title}" class="w-full h-64 object-cover rounded-lg mb-6">
+                        <h1 class="text-3xl font-bold text-gray-800 mb-4">${news.title}</h1>
+                        ${news.content}
+                        
+                        <div class="news-meta">
+                            <div class="news-author">
+                                <img src="https://picsum.photos/seed/author/40/40.jpg" alt="Author" class="rounded-full">
+                                <div>
+                                    <div class="font-semibold">${news.author}</div>
+                                    <div class="text-sm text-gray-500">Admin Desa Allaere</div>
+                                </div>
+                            </div>
+                            <div class="news-share">
+                                <button class="news-share-facebook" onclick="shareNews('facebook', ${newsId})">
+                                    <i class="fab fa-facebook-f"></i>
+                                </button>
+                                <button class="news-share-twitter" onclick="shareNews('twitter', ${newsId})">
+                                    <i class="fab fa-twitter"></i>
+                                </button>
+                                <button class="news-share-whatsapp" onclick="shareNews('whatsapp', ${newsId})">
+                                    <i class="fab fa-whatsapp"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        ${relatedNews.length > 0 ? `
+                            <div class="related-news">
+                                <h3 class="text-xl font-bold mb-4">Berita Terkait</h3>
+                                ${relatedNews.map(rn => `
+                                    <div class="related-news-item" onclick="showNewsDetail(${rn.id})">
+                                        <img src="${rn.image}" alt="${rn.title}" class="related-news-image">
+                                        <div class="related-news-content">
+                                            <div class="related-news-title">${rn.title}</div>
+                                            <div class="related-news-date">${rn.date}</div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+                
+                openModal('newsDetail');
+            }
+        }
+
+        function shareNews(platform, newsId) {
+            const news = newsData.find(n => n.id === newsId);
+            if (!news) return;
+            
+            const url = window.location.href;
+            const text = `${news.title} - ${news.excerpt}`;
+            
+            let shareUrl = '';
+            
+            switch(platform) {
+                case 'facebook':
+                    shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+                    break;
+                case 'twitter':
+                    shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+                    break;
+                case 'whatsapp':
+                    shareUrl = `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`;
+                    break;
+            }
+            
+            if (shareUrl) {
+                window.open(shareUrl, '_blank', 'width=600,height=400');
+                showNotification('success', `Membagikan berita ke ${platform}...`);
+            }
+        }
+
+        // Load Announcements
+        function loadAnnouncements() {
+            // Simulasi data pengumuman
+            announcementData = [
+                {
+                    id: 1,
+                    title: 'Pembukaan Pendaftaran Program BLT-DD Tahap I Tahun 2025',
+                    content: 'Pemerintah Desa Allaere membuka pendaftaran Program Bantuan Langsung Tunai Dana Desa (BLT-DD) Tahap I Tahun 2025. Pendaftaran dibuka mulai tanggal 1-15 Januari 2025 di Kantor Desa Allaere. Persyaratan: Warga Desa Allaere, KTP, KK, Surat Keterangan Tidak Mampu dari RT/RW.',
+                    date: 'Senin, 1 Januari 2025',
+                    type: 'BANTUAN SOSIAL'
+                },
+                {
+                    id: 2,
+                    title: 'Musyawarah Desa Pembahasan APBDes 2025',
+                    content: 'Akan dilaksanakan Musyawarah Desa Pembahasan Anggaran Pendapatan dan Belanja Desa (APBDes) Tahun Anggaran 2025 pada hari Sabtu, 20 Januari 2025 pukul 08:00 WITA di Kantor Desa Allaere. Diundang seluruh unsur masyarakat untuk hadir.',
+                    date: 'Senin, 15 Januari 2025',
+                    type: 'PEMERINTAHAN'
+                },
+                {
+                    id: 3,
+                    title: 'Vaksinasi COVID-19 Dosis Booster',
+                    content: 'Dinas Kesehatan Kabupaten Maros akan menyelenggarakan vaksinasi COVID-19 dosis booster bagi masyarakat Desa Allaere pada hari Rabu, 24 Januari 2025 pukul 08:00-12:00 WITA di Posyandu Dusun Bontotangnga. Persyaratan: Sudah vaksin dosis 1 dan 2, membawa KTP dan kartu vaksin.',
+                    date: 'Selasa, 16 Januari 2025',
+                    type: 'KESEHATAN'
+                }
+            ];
+            
+            renderAnnouncements();
+        }
+
+        function renderAnnouncements() {
+            const announcementContainer = document.getElementById('announcementContainer');
+            if (!announcementContainer) return;
+            
+            announcementContainer.innerHTML = '';
+            
+            announcementData.forEach(announcement => {
+                const announcementItem = document.createElement('div');
+                announcementItem.className = 'announcement-item';
+                announcementItem.innerHTML = `
+                    <div class="flex items-center text-sm text-gray-500 mb-2">
+                        <span class="mr-4">📅 ${announcement.date}</span>
+                        <span class="bg-yellow-600 text-white px-2 py-1 rounded text-xs">${announcement.type}</span>
+                    </div>
+                    <h3 class="announcement-title">${announcement.title}</h3>
+                    <p class="announcement-content">${announcement.content}</p>
+                `;
+                announcementContainer.appendChild(announcementItem);
+            });
+        }
+
+        function loadMoreAnnouncements() {
+            // Simulasi memuat lebih banyak pengumuman
+            showNotification('info', 'Memuat lebih banyak pengumuman...');
+            
+            setTimeout(() => {
+                // Tambahkan pengumuman baru
+                const newAnnouncement = {
+                    id: announcementData.length + 1,
+                    title: 'Pembagian Masker Gratis',
+                    content: 'Pemerintah Desa Allaere akan membagikan masker gratis kepada masyarakat sebagai upaya pencegahan penyebaran COVID-19. Pembagian akan dilaksanakan pada hari Minggu, 28 Januari 2025 pukul 09:00 WITA di Kantor Desa Allaere.',
+                    date: 'Rabu, 17 Januari 2025',
+                    type: 'KESEHATAN'
+                };
+                
+                announcementData.push(newAnnouncement);
+                renderAnnouncements();
+                showNotification('success', 'Pengumuman berhasil dimuat.');
+            }, 1000);
+        }
+
+        // Load Documents
+        function loadDocuments() {
+            // Simulasi data dokumen
+            documentData = [
+                {
+                    id: 1,
+                    name: 'Perdes No. 1 Tahun 2024 tentang APBDes',
+                    date: '15 Januari 2024',
+                    size: '1.2 MB'
+                },
+                {
+                    id: 2,
+                    name: 'Perdes No. 2 Tahun 2024 tentang RKP Desa',
+                    date: '20 Januari 2024',
+                    size: '980 KB'
+                },
+                {
+                    id: 3,
+                    name: 'Perdes No. 3 Tahun 2024 tentang BLT-DD',
+                    date: '25 Januari 2024',
+                    size: '750 KB'
+                }
+            ];
+            
+            renderDocuments();
+        }
+
+        // Keyboard Shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + K for search
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                document.querySelector('.search-box input').focus();
+            }
+
+            // Escape to close modals
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal.active').forEach(modal => {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                });
+            }
+        });
+
+        // Print functionality
+        function printPage() {
+            window.print();
+        }
+
+        // Live Chat Simulation
+        function openLiveChat() {
+            showNotification('info', 'Fitur live chat akan segera tersedia. Silakan hubungi kami melalui WhatsApp.');
+        }
+    </script>
+</body>
+
+</html>
